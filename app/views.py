@@ -6,7 +6,12 @@ This file creates your application.
 """
 
 from app import app
+from app import forms
 from flask import render_template, request, redirect, url_for, flash
+from app import mail
+from flask_mail import Message 
+
+
 
 
 ###
@@ -23,6 +28,26 @@ def home():
 def about():
     """Render the website's about page."""
     return render_template('about.html', name="Mary Jane")
+    
+
+@app.route('/contact/', methods=['GET', 'POST'])
+def contact():
+    """Render the website's contact page."""
+    form = forms.ContactForm()
+    if request.method == 'POST':
+        if form.validate_on_submit():
+            # Note the difference when retrieving form data using Flask-WTF
+            # Here we use myform.firstname.data instead of request.form['firstname']
+            name = form.name.data
+            email = form.email.data
+            subject = form.subject.data
+            message = form.message.data
+
+            flash('You have successfully filled out the form', 'success')
+            msg= Message(subject=subject,from=email, to="smithcleon", body=message)
+            return render_template('result.html', name=name)
+        flash_errors(form)
+    return render_template('contact.html', form=form)
 
 
 ###
