@@ -44,8 +44,10 @@ def contact():
             message = form.message.data
 
             flash('You have successfully filled out the form', 'success')
-            msg= Message(subject=subject,from=email, to="smithcleon", body=message)
-            return render_template('result.html', name=name)
+            msg = Message(subject, sender = 'yourId@gmail.com', recipients = [email])
+            msg.body = message
+            mail.send(msg)
+            return redirect('/')
         flash_errors(form)
     return render_template('contact.html', form=form)
 
